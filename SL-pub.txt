@@ -1,0 +1,54 @@
+resource "oci_core_security_list" "Public-SL-1"{
+compartment_id = var.compartment_ocid
+display_name = "Public-DB-SL-1"
+vcn_id = oci_core_vcn.vcn1.id
+
+
+egress_security_rules {
+    description = Allow Egress Traffic
+    protocol = "all"
+    destination = "0.0.0.0/0"
+}
+
+ingress_security_rules {
+     description = SSH Access Rule
+    protocol = 6
+   source = "0.0.0.0/0"
+tcp_options {
+min = 22
+max = 22
+}
+}
+}
+
+ingress_security_rules {
+    description = DB Access Rule
+    protocol  = "6" // tcp
+    source    = "0.0.0.0/0"
+    stateless = false
+
+    ingress_security_rules {
+    protocol = 6
+   source = "0.0.0.0/0"
+tcp_options {
+min = 1521
+max = 1521
+}
+}
+}
+
+ingress_security_rules {
+    description = VNC Acess Rule
+    protocol  = "6" // tcp
+    source    = "0.0.0.0/0"
+    stateless = false
+
+    ingress_security_rules {
+    protocol = 6
+   source = "0.0.0.0/0"
+tcp_options {
+min = 5901-5905,6901-6905
+max = 5901-5905,6901-6905
+}
+}
+}
